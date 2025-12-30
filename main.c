@@ -10,7 +10,7 @@
 
 int main(int argc, char **argv)
 {
-    char *cmd = malloc(5 * sizeof(char));
+    char *cmd = malloc(sizeof(char) * (strlen(EPICLANG_COMPILER) + 1));
 
     strcpy(cmd, EPICLANG_COMPILER);
     for (int i = 1; i < argc; i++) {
