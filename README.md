@@ -19,7 +19,7 @@ This project is a rewrite and optimization of Epiclang, allowing programs to run
 ## Usage
 
 ```sh
-./epiclang <file.c>
+epiclang <file.c>
 ```
 
 ## Project Structure
