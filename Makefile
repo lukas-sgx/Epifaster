@@ -5,7 +5,7 @@
 ## Makefile
 ##
 
-CC = clang
+CC = clang-20
 CFLAGS = -Wall -Wextra -Werror -Iinclude
 
 SRC = main.c
