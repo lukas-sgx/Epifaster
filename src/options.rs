@@ -20,11 +20,9 @@ pub fn help() {
     println!();
     println!("USAGE:");
     println!("    epiclang <file.c>...");
-    println!("    epiclang <dir>...");
     println!();
     println!("OPTIONS:");
     println!("    -h, --help\t\tPrint help information");
     println!("    -v, --version\tPrint version information");
-    println!("    -b, --build\t\tCheck coding style & run file");
     process::exit(0);
 }
