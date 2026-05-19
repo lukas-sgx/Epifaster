@@ -47,7 +47,7 @@ impl Violation {
     
         for infraction in infractions.into_iter().rev() {
             println!("{infraction}");
-            println!("{}", Violation::get_context(infraction));
+            print!("{}", Violation::get_context(infraction));
         }
         println!();
     }
