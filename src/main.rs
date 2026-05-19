@@ -1,23 +1,55 @@
 /*
-** EPITECH PROJECT, 2026
-** ~/epitech/free/EpiLinter/src/epifaster
+** LUKAS SOIGNEUX PROJECT, 2026
+** directory
 ** File description:
-** plugin.rs
+** filename
 */
 
-use std::{env, process::Command};
+use coding_style::violation::Violation;
+use std::env;
+use colored::Colorize;
 
-const EPICLANG_PLUGIN_PATH: &str = ".local/lib/epiclang/plugins/epitech-plugin-banana.so";
-const EPICLANG_COMPILER: &str = "clang";
+mod arguments;
+mod build;
+mod coding_style;
+mod options;
+
+fn show_error(warning_generated: usize, error_compilation: usize) {
+    if warning_generated > 0 {
+        if warning_generated > 1 {
+            eprint!("{}", format!("{warning_generated} warnings").bright_white());
+        } else {
+            eprint!("{}", format!("{warning_generated} warning").bright_white());
+        }
+    }
+    if error_compilation > 0 {
+        if warning_generated > 0 {
+            eprint!("{}", " and ".bright_white());
+        }
+        if error_compilation > 1 {
+            eprint!("{}", format!("{error_compilation} errors").bright_white());
+        } else {
+            eprint!("{}", format!("{error_compilation} error").bright_white());
+        }
+    }
+    if warning_generated > 0 || error_compilation > 0 {
+        eprintln!("{}", " generated.".bright_white());
+    }
+}
 
 pub fn main() {
-    let mut args: Vec<String> = env::args().skip(1).collect();
-    let home_dir = env::home_dir().expect("Error: home directory not found");
+    let args: Vec<String> = env::args().skip(1).collect();
+    let parameters = arguments::get_parameters(args);
+    let files = parameters.files;
+    let mut infraction = Violation::new();
+    let error_compilation: usize;
+    let warning_generated: usize;
 
-    args.push(format!("-fplugin={}/{}", home_dir.display(), EPICLANG_PLUGIN_PATH));
-
-    Command::new(EPICLANG_COMPILER)
-        .args(args)
-        .status()
-        .expect("Error: on lauching epifaster");
+    for file in files.clone() {
+        coding_style::banana::checker(file.clone(), &mut infraction);
+    }
+    Violation::get_warning(&infraction);
+    error_compilation = build::compiler(files, parameters.supplement_args);
+    warning_generated = infraction.iter().count() as usize;
+    show_error(warning_generated, error_compilation);
 }
