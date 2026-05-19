@@ -29,7 +29,7 @@ pub const C_G8: &str = "trailing empty line";
 pub const C_G10: &str = "inline assembler is forbidden";
 pub const C_O1: &str = "temp files are forbidden";
 pub const C_O2: &str = "source file must be .c or .h";
-pub const C_O4: &str = "file must be according to the snake_case convention";
+pub const C_O4: &str = "file name must be according to the snake_case convention";
 
 
 pub const REFERENCE: &[(&'static str, Option<&str>, Level)] = &[

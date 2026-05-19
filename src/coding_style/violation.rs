@@ -36,7 +36,7 @@ pub struct Violation {
 }
 
 impl Violation {
-    pub fn iter(&self) -> ViolationIter {
+    pub fn iter(&self) -> ViolationIter<'_> {
         ViolationIter {
             next: self.head.as_deref(),
         }
@@ -45,13 +45,13 @@ impl Violation {
     pub fn get_warning(&self) {
         let infractions: Vec<&ViolationNode> = self.iter().collect();
     
-        for infraction in infractions.clone().into_iter().rev() {
+        for infraction in infractions.iter().rev() {
             println!("{infraction}");
             print!("{}", Violation::get_context(infraction));
         }
-        if infractions.iter().count() > 0 {
-            println!();
-        }
+        // if infractions.len() > 0 {
+        //     println!();
+        // }
     }
     
     pub fn push(&mut self, reference: &'static str, line_start: Option<u32>, line_end: Option<u32>, column: Option<u32>, file: Option<String>, error: Option<String>) {
@@ -74,9 +74,12 @@ impl Violation {
 
     pub fn get_context(violation: &ViolationNode) -> String {
         let file = banana::get_file_content(violation.file.as_deref().unwrap_or_default().to_string());
-        let line_start = violation.line_start.unwrap_or(0) as usize - 1;
-        let line_end = violation.line_end.unwrap_or(0) as usize;
-        
+        let line_start = (violation.line_start.unwrap_or(0) as usize - 1).saturating_sub(1);
+        let line_end = (violation.line_end.unwrap_or(0) as usize).saturating_sub(1);
+
+        if violation.line_start.is_none() && violation.line_end.is_none() {
+            return String::new();
+        }
         file.lines()
             .enumerate()
             .skip(line_start)
@@ -122,9 +125,9 @@ impl fmt::Display for ViolationNode {
         write!(
             f,
             "{}:{}:{}: {}: {} [{}] {} ({})",
-            self.file.as_deref().unwrap_or("?").bold(),
-            self.line_start.map_or("?".to_string(), |l| l.to_string()).bold(),
-            self.column.map_or("?".to_string(), |c| c.to_string()).bold(),
+            self.file.as_deref().unwrap_or("0").bold(),
+            self.line_start.map_or("0".to_string(), |l| l.to_string()).bold(),
+            self.column.map_or("0".to_string(), |c| c.to_string()).bold(),
             "warning".magenta().bold(),
             "[Banana]".bold(),
             Violation::get_level(level).bold(),
